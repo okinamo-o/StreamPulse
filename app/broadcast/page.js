@@ -31,19 +31,17 @@ export default function BroadcastPage() {
     setError("");
 
     try {
-      // Get camera stream — high quality
+      // Get camera stream
       const stream = await navigator.mediaDevices.getUserMedia({
         video: {
           facingMode: facingMode,
-          width: { ideal: 1920, min: 1280 },
-          height: { ideal: 1080, min: 720 },
-          frameRate: { ideal: 30 },
+          width: { ideal: 1280 },
+          height: { ideal: 720 },
         },
         audio: {
           echoCancellation: true,
           noiseSuppression: true,
           autoGainControl: true,
-          sampleRate: 48000,
         },
       });
 
@@ -83,10 +81,9 @@ export default function BroadcastPage() {
                   params.encodings = [{}];
                 }
                 if (sender.track?.kind === "video") {
-                  params.encodings[0].maxBitrate = 5_000_000; // 5 Mbps
-                  params.degradationPreference = "maintain-resolution";
+                  params.encodings[0].maxBitrate = 2_500_000; // 2.5 Mbps
                 } else if (sender.track?.kind === "audio") {
-                  params.encodings[0].maxBitrate = 192_000; // 192 kbps
+                  params.encodings[0].maxBitrate = 128_000; // 128 kbps
                 }
                 await sender.setParameters(params);
               }
@@ -171,15 +168,13 @@ export default function BroadcastPage() {
         const newStream = await navigator.mediaDevices.getUserMedia({
           video: {
             facingMode: newMode,
-            width: { ideal: 1920, min: 1280 },
-            height: { ideal: 1080, min: 720 },
-            frameRate: { ideal: 30 },
+            width: { ideal: 1280 },
+            height: { ideal: 720 },
           },
           audio: {
             echoCancellation: true,
             noiseSuppression: true,
             autoGainControl: true,
-            sampleRate: 48000,
           },
         });
 
