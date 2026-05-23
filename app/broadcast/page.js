@@ -31,14 +31,20 @@ export default function BroadcastPage() {
     setError("");
 
     try {
-      // Get camera stream
+      // Get camera stream — high quality
       const stream = await navigator.mediaDevices.getUserMedia({
         video: {
           facingMode: facingMode,
-          width: { ideal: 1280 },
-          height: { ideal: 720 },
+          width: { ideal: 1920, min: 1280 },
+          height: { ideal: 1080, min: 720 },
+          frameRate: { ideal: 30 },
         },
-        audio: true,
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true,
+          sampleRate: 48000,
+        },
       });
 
       streamRef.current = stream;
@@ -65,6 +71,29 @@ export default function BroadcastPage() {
         call.answer(stream);
         connectionsRef.current.push(call);
         setViewerCount((prev) => prev + 1);
+
+        // Boost video bitrate for high quality streaming
+        setTimeout(async () => {
+          try {
+            const senders = call.peerConnection?.getSenders();
+            if (senders) {
+              for (const sender of senders) {
+                const params = sender.getParameters();
+                if (!params.encodings || params.encodings.length === 0) {
+                  params.encodings = [{}];
+                }
+                if (sender.track?.kind === "video") {
+                  params.encodings[0].maxBitrate = 2_500_000; // 2.5 Mbps
+                } else if (sender.track?.kind === "audio") {
+                  params.encodings[0].maxBitrate = 128_000; // 128 kbps
+                }
+                await sender.setParameters(params);
+              }
+            }
+          } catch (e) {
+            console.warn("Could not set bitrate:", e);
+          }
+        }, 1000);
 
         call.on("close", () => {
           connectionsRef.current = connectionsRef.current.filter(
@@ -141,10 +170,16 @@ export default function BroadcastPage() {
         const newStream = await navigator.mediaDevices.getUserMedia({
           video: {
             facingMode: newMode,
-            width: { ideal: 1280 },
-            height: { ideal: 720 },
+            width: { ideal: 1920, min: 1280 },
+            height: { ideal: 1080, min: 720 },
+            frameRate: { ideal: 30 },
           },
-          audio: true,
+          audio: {
+            echoCancellation: true,
+            noiseSuppression: true,
+            autoGainControl: true,
+            sampleRate: 48000,
+          },
         });
 
         // Replace tracks

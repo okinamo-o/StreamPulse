@@ -11,6 +11,7 @@ export default function WatchStreamPage({ params }) {
 
   const [status, setStatus] = useState("connecting"); // connecting | connected | error | ended
   const [errorMsg, setErrorMsg] = useState("");
+  const [isMuted, setIsMuted] = useState(true);
 
   const connectToStream = useCallback(() => {
     setStatus("connecting");
@@ -103,12 +104,41 @@ export default function WatchStreamPage({ params }) {
     connectToStream();
   }, [connectToStream]);
 
-  // Assign remote stream to video element once it mounts
+  // Assign remote stream to video element once it mounts, then try to unmute
   useEffect(() => {
     if (status === "connected" && videoRef.current && remoteStreamRef.current) {
       videoRef.current.srcObject = remoteStreamRef.current;
+      // Start muted for autoplay, then try to unmute after a short delay
+      videoRef.current.muted = true;
+      setIsMuted(true);
+      setTimeout(() => {
+        if (videoRef.current) {
+          videoRef.current.muted = false;
+          videoRef.current.play().then(() => {
+            setIsMuted(false);
+          }).catch(() => {
+            // Browser blocked unmuted autoplay — keep muted
+            videoRef.current.muted = true;
+            setIsMuted(true);
+          });
+        }
+      }, 300);
     }
   }, [status]);
+
+  const toggleMute = useCallback(() => {
+    if (videoRef.current) {
+      const newMuted = !videoRef.current.muted;
+      videoRef.current.muted = newMuted;
+      if (!newMuted) {
+        videoRef.current.play().catch(() => {
+          videoRef.current.muted = true;
+          setIsMuted(true);
+        });
+      }
+      setIsMuted(newMuted);
+    }
+  }, []);
 
   useEffect(() => {
     connectToStream();
@@ -143,7 +173,7 @@ export default function WatchStreamPage({ params }) {
 
       {status === "connected" ? (
         <div className="video-wrapper">
-          <video ref={videoRef} autoPlay playsInline />
+          <video ref={videoRef} autoPlay playsInline muted={isMuted} />
           <div className="video-overlay">
             <div className="live-badge">
               <span className="live-dot" />
@@ -175,6 +205,14 @@ export default function WatchStreamPage({ params }) {
 
       {status === "connected" && (
         <div className="controls-bar">
+          <button
+            className="btn btn-ghost btn-icon"
+            onClick={toggleMute}
+            title={isMuted ? "Unmute" : "Mute"}
+            id="toggle-mute-btn"
+          >
+            {isMuted ? "🔇" : "🔊"}
+          </button>
           <div className="status">
             <span className="status-dot connected" />
             <span>Connected</span>
