@@ -1,66 +1,37 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+import Link from "next/link";
 
 export default function Home() {
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className={styles.intro}>
-          <h1>To get started, edit the page.js file.</h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <>
+      <section className="hero">
+        <div className="hero-badge">
+          <span>⚡</span>
+          <span>Peer-to-Peer • No Sign-Up • Free</span>
         </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+        <h1>
+          Go Live <span className="gradient-text">Instantly</span>
+          <br />
+          From Your Phone
+        </h1>
+        <p>
+          Open your camera, share a code, and let anyone watch your stream in
+          real-time. Zero setup, zero downloads.
+        </p>
+      </section>
+
+      <div className="choice-grid">
+        <Link href="/broadcast" className="glass-card choice-card" id="broadcast-card">
+          <div className="choice-icon">📹</div>
+          <h3>Start Broadcasting</h3>
+          <p>Open your camera and go live. Share the room code with your viewers.</p>
+        </Link>
+
+        <Link href="/watch" className="glass-card choice-card" id="watch-card">
+          <div className="choice-icon">👁️</div>
+          <h3>Watch a Stream</h3>
+          <p>Enter a room code to watch a live stream in real-time.</p>
+        </Link>
+      </div>
+    </>
   );
 }
