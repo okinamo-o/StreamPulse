@@ -72,7 +72,7 @@ export default function BroadcastPage() {
         connectionsRef.current.push(call);
         setViewerCount((prev) => prev + 1);
 
-        // Boost video bitrate for high quality streaming
+        // Boost bitrate for high quality streaming
         setTimeout(async () => {
           try {
             const senders = call.peerConnection?.getSenders();
@@ -83,9 +83,10 @@ export default function BroadcastPage() {
                   params.encodings = [{}];
                 }
                 if (sender.track?.kind === "video") {
-                  params.encodings[0].maxBitrate = 2_500_000; // 2.5 Mbps
+                  params.encodings[0].maxBitrate = 5_000_000; // 5 Mbps
+                  params.degradationPreference = "maintain-resolution";
                 } else if (sender.track?.kind === "audio") {
-                  params.encodings[0].maxBitrate = 128_000; // 128 kbps
+                  params.encodings[0].maxBitrate = 192_000; // 192 kbps
                 }
                 await sender.setParameters(params);
               }

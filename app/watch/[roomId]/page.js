@@ -84,14 +84,34 @@ export default function WatchStreamPage({ params }) {
     initPeer();
   }, [roomId]);
 
-  // Create an empty media stream for the call (PeerJS requires a stream to call)
+  // Create a dummy media stream with both video AND audio tracks.
+  // Both tracks are required so that WebRTC's SDP negotiation includes
+  // audio, allowing the broadcaster's mic audio to be sent back.
   function createEmptyStream() {
+    // Dummy video track (1x1 canvas)
     const canvas = document.createElement("canvas");
     canvas.width = 1;
     canvas.height = 1;
     const ctx = canvas.getContext("2d");
     ctx.fillRect(0, 0, 1, 1);
     const stream = canvas.captureStream(0);
+
+    // Silent audio track via AudioContext
+    try {
+      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const oscillator = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      gain.gain.value = 0; // completely silent
+      oscillator.connect(gain);
+      const dest = audioCtx.createMediaStreamDestination();
+      gain.connect(dest);
+      oscillator.start();
+      const silentAudioTrack = dest.stream.getAudioTracks()[0];
+      stream.addTrack(silentAudioTrack);
+    } catch (e) {
+      console.warn("Could not create silent audio track:", e);
+    }
+
     return stream;
   }
 
