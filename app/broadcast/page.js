@@ -35,8 +35,8 @@ export default function BroadcastPage() {
       const stream = await navigator.mediaDevices.getUserMedia({
         video: {
           facingMode: facingMode,
-          width: { ideal: 1920 },
-          height: { ideal: 1080 },
+          width: { ideal: 1280 },
+          height: { ideal: 720 },
           frameRate: { ideal: 30 },
         },
         audio: {
@@ -82,7 +82,7 @@ export default function BroadcastPage() {
                   params.encodings = [{}];
                 }
                 if (sender.track?.kind === "video") {
-                  params.encodings[0].maxBitrate = 2_500_000; // 2.5 Mbps
+                  params.encodings[0].maxBitrate = 1_200_000; // 1.2 Mbps
                 } else if (sender.track?.kind === "audio") {
                   params.encodings[0].maxBitrate = 128_000; // 128 kbps
                 }
@@ -169,8 +169,8 @@ export default function BroadcastPage() {
         const newStream = await navigator.mediaDevices.getUserMedia({
           video: {
             facingMode: newMode,
-            width: { ideal: 1920 },
-            height: { ideal: 1080 },
+            width: { ideal: 1280 },
+            height: { ideal: 720 },
             frameRate: { ideal: 30 },
           },
           audio: {
