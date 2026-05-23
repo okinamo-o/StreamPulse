@@ -82,7 +82,8 @@ export default function BroadcastPage() {
                   params.encodings = [{}];
                 }
                 if (sender.track?.kind === "video") {
-                  params.encodings[0].maxBitrate = 1_200_000; // 1.2 Mbps
+                  params.encodings[0].maxBitrate = 3_000_000; // 3 Mbps
+                  params.degradationPreference = "maintain-resolution";
                 } else if (sender.track?.kind === "audio") {
                   params.encodings[0].maxBitrate = 128_000; // 128 kbps
                 }
