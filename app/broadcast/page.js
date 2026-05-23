@@ -35,8 +35,9 @@ export default function BroadcastPage() {
       const stream = await navigator.mediaDevices.getUserMedia({
         video: {
           facingMode: facingMode,
-          width: { ideal: 1280 },
-          height: { ideal: 720 },
+          width: { ideal: 1920 },
+          height: { ideal: 1080 },
+          frameRate: { ideal: 30 },
         },
         audio: {
           echoCancellation: true,
@@ -168,8 +169,9 @@ export default function BroadcastPage() {
         const newStream = await navigator.mediaDevices.getUserMedia({
           video: {
             facingMode: newMode,
-            width: { ideal: 1280 },
-            height: { ideal: 720 },
+            width: { ideal: 1920 },
+            height: { ideal: 1080 },
+            frameRate: { ideal: 30 },
           },
           audio: {
             echoCancellation: true,
