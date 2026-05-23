@@ -43,10 +43,6 @@ export default function BroadcastPage() {
 
       streamRef.current = stream;
 
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-      }
-
       // Create PeerJS peer
       const { Peer } = await import("peerjs");
       const code = generateCode();
@@ -187,6 +183,13 @@ export default function BroadcastPage() {
       setTimeout(() => setCopied(false), 2000);
     });
   }, [roomCode]);
+
+  // Assign stream to video element once it mounts
+  useEffect(() => {
+    if (isLive && videoRef.current && streamRef.current) {
+      videoRef.current.srcObject = streamRef.current;
+    }
+  }, [isLive]);
 
   // Cleanup on unmount
   useEffect(() => {

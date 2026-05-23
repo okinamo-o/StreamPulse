@@ -7,6 +7,7 @@ export default function WatchStreamPage({ params }) {
   const videoRef = useRef(null);
   const peerRef = useRef(null);
   const retryTimeoutRef = useRef(null);
+  const remoteStreamRef = useRef(null);
 
   const [status, setStatus] = useState("connecting"); // connecting | connected | error | ended
   const [errorMsg, setErrorMsg] = useState("");
@@ -38,10 +39,8 @@ export default function WatchStreamPage({ params }) {
           }
 
           call.on("stream", (remoteStream) => {
+            remoteStreamRef.current = remoteStream;
             setStatus("connected");
-            if (videoRef.current) {
-              videoRef.current.srcObject = remoteStream;
-            }
           });
 
           call.on("close", () => {
@@ -103,6 +102,13 @@ export default function WatchStreamPage({ params }) {
     }
     connectToStream();
   }, [connectToStream]);
+
+  // Assign remote stream to video element once it mounts
+  useEffect(() => {
+    if (status === "connected" && videoRef.current && remoteStreamRef.current) {
+      videoRef.current.srcObject = remoteStreamRef.current;
+    }
+  }, [status]);
 
   useEffect(() => {
     connectToStream();
